@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% set p="analytics" %}
+{% block extra_head %}
+<style>
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+.kpi{background:var(--white);border-radius:var(--r);padding:22px 18px;border:1px solid var(--border);box-shadow:var(--sh);text-align:center}
+.kpi-icon{font-size:1.7rem;margin-bottom:9px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--g1);line-height:1}
+.kpi-lbl{font-size:.68rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:32px}
+.chart-card{background:var(--white);border-radius:var(--r);padding:26px;border:1px solid var(--border);box-shadow:var(--sh)}
+.chart-card.full{grid-column:span 2}
+.cc-t{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:3px}
+.cc-s{font-size:.73rem;color:var(--muted);margin-bottom:18px}
+.ch{position:relative;height:230px}
+/* SHAP bars */
+.fi-row{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.fi-name{font-size:.76rem;color:var(--slate);font-weight:500;width:140px;flex-shrink:0}
+.fi-bw{flex:1;background:var(--border);border-radius:50px;height:9px}
+.fi-b{height:9px;border-radius:50px;background:linear-gradient(90deg,var(--gold),var(--o1));transition:width 1.1s ease}
+.fi-pct{font-size:.72rem;font-weight:700;color:var(--ink);width:46px;text-align:right;flex-shrink:0}
+/* model table */
+.model-tbl{width:100%;border-collapse:collapse;margin-top:8px}
+.model-tbl th{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.model-tbl td{padding:11px 14px;font-size:.82rem;border-bottom:1px solid rgba(205,224,210,.4)}
+.model-tbl tr:last-child td{border-bottom:none}
+.model-tbl tr:hover td{background:rgba(26,71,49,.03)}
+.best-row td{font-weight:700;color:var(--g1)}
+.r2-cell{font-family:'Playfair Display',serif;font-weight:700}
+.best-badge{display:inline-block;background:var(--g1);color:#fff;font-size:.6rem;padding:2px 7px;border-radius:50px;font-weight:700;margin-left:6px}
+/* heatmap */
+.hmap{border-collapse:collapse;width:100%}
+.hmap th,.hmap td{padding:9px 12px;font-size:.76rem;text-align:center;border:1px solid var(--border)}
+.hmap th{background:var(--cream);font-weight:700;color:var(--slate)}
+.hmap td.rl{text-align:left;font-weight:600;background:var(--cream);color:var(--slate)}
+
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr}.chart-card.full{grid-column:span 1}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.kpi-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="page-hero-wrap">
+    <div class="chip">📊 Data Insights</div>
+    <h1 class="ptitle">Analytics <span class="hl">Dashboard</span></h1>
+    <p class="pdesc">Full experimental analysis — 7 model comparison, SHAP importance, actual vs predicted, residual analysis, 3D scatter, season & crop patterns.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-wrap">
+    <div class="sec-label">Dataset Overview</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-icon">📋</div><div class="kpi-val">2,800</div><div class="kpi-lbl">Records</div></div>
+      <div class="kpi"><div class="kpi-icon">🌾</div><div class="kpi-val">5</div><div class="kpi-lbl">Crop Types</div></div>
+      <div class="kpi"><div class="kpi-icon">📈</div><div class="kpi-val" id="kpiAvg">–</div><div class="kpi-lbl">Avg Yield hg/ha</div></div>
+      <div class="kpi"><div class="kpi-icon">🏆</div><div class="kpi-val">0.9849</div><div class="kpi-lbl">Best R² (CatBoost)</div></div>
+    </div>
+
+    <div class="sec-label" style="margin-top:52px">Visualizations</div>
+    <h2 class="stitle">Graphical Analysis (from your document)</h2>
+
+    <div class="charts-grid">
+
+      <!-- Model Comparison MSE -->
+      <div class="chart-card">
+        <div class="cc-t">MSE Comparison — All 7 Models</div>
+        <div class="cc-s">Lower MSE = better. CatBoost wins.</div>
+        <div class="ch"><canvas id="mseChart"></canvas></div>
+      </div>
+
+      <!-- Model R2 -->
+      <div class="chart-card">
+        <div class="cc-t">R² Score — All 7 Models</div>
+        <div class="cc-s">Higher = better. CatBoost & LightGBM top performers.</div>
+        <div class="ch"><canvas id="r2Chart"></canvas></div>
+      </div>
+
+      <!-- Actual vs Predicted -->
+      <div class="chart-card">
+        <div class="cc-t">Actual vs Predicted Yield (CatBoost)</div>
+        <div class="cc-s">Points close to red line = accurate predictions.</div>
+        <div class="ch"><canvas id="avpChart"></canvas></div>
+      </div>
+
+      <!-- Residuals -->
+      <div class="chart-card">
+        <div class="cc-t">Residual Analysis (CatBoost)</div>
+        <div class="cc-s">Residuals randomly scattered around zero = good model.</div>
+        <div class="ch"><canvas id="residChart"></canvas></div>
+      </div>
+
+      <!-- Crop Avg bar -->
+      <div class="chart-card">
+        <div class="cc-t">Average Yield by Crop</div>
+        <div class="cc-s">Potatoes yield highest; Soybeans lowest.</div>
+        <div class="ch"><canvas id="cropChart"></canvas></div>
+      </div>
+
+      <!-- Season doughnut -->
+      <div class="chart-card">
+        <div class="cc-t">Yield Distribution by Season</div>
+        <div class="cc-s">Post-monsoon peaks for most crops.</div>
+        <div class="ch"><canvas id="seasonChart"></canvas></div>
+      </div>
+
+      <!-- SHAP importance -->
+      <div class="chart-card full">
+        <div class="cc-t">SHAP Feature Importance (SHapley Additive Explanations)</div>
+        <div class="cc-s">How much each climate feature contributes to yield prediction on average — from CatBoost model.</div>
+        <div id="shapBars" style="margin-top:8px"></div>
+      </div>
+
+      <!-- Model full table -->
+      <div class="chart-card full">
+        <div class="cc-t">Complete Model Comparison Table</div>
+        <div class="cc-s">MSE, R² and MAE for all 7 models — matching Table 5.1 in your document.</div>
+        <table class="model-tbl" id="modelTbl">
+          <thead><tr><th>Model</th><th>MSE (Lower=Better)</th><th>R² Score (Higher=Better)</th><th>MAE (Lower=Better)</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Season × Crop heatmap -->
+      <div class="chart-card full">
+        <div class="cc-t">Season × Crop Yield Heatmap</div>
+        <div class="cc-s">Average yield (hg/ha) for each crop-season combination. Darker green = higher yield.</div>
+        <div style="overflow-x:auto;margin-top:8px"><table class="hmap" id="hmapTbl"></table></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PAL=['#1a4731','#3d8b63','#c9963a','#c8520a','#6ab187','#a8d5b5','#c0c0c0'];
+const SEASONS=['summer','post-monsoon','monsoon','winter'];
+const CROPS=['Soybeans','Maize','Rice','Potatoes','Wheat'];
+const MODEL_NAMES=["Random Forest","SVR","KNN","Decision Tree","XGBoost","LightGBM","CatBoost"];
+
+async function load(){
+  const res=await fetch('/api/analytics');
+  const d=await res.json();
+
+  document.getElementById('kpiAvg').textContent=Math.round(d.dataset_stats.avg_yield).toLocaleString();
+
+  // MSE chart
+  const mseVals=MODEL_NAMES.map(m=>d.model_results[m]?.MSE||0);
+  new Chart(document.getElementById('mseChart'),{type:'bar',data:{labels:MODEL_NAMES,datasets:[{data:mseVals,backgroundColor:PAL,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>v.raw.toLocaleString()}}},scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:30}}}}});
+
+  // R2 chart
+  const r2Vals=MODEL_NAMES.map(m=>d.model_results[m]?.R2||0);
+  new Chart(document.getElementById('r2Chart'),{type:'bar',data:{labels:MODEL_NAMES,datasets:[{data:r2Vals,backgroundColor:PAL,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:Math.min(...r2Vals)-.05,max:1,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:30}}}}});
+
+  // Actual vs Predicted
+  const avp=d.actual_vs_pred;
+  const minV=Math.min(...avp.map(x=>x.actual));
+  const maxV=Math.max(...avp.map(x=>x.actual));
+  new Chart(document.getElementById('avpChart'),{type:'scatter',data:{datasets:[{label:'Predicted vs Actual',data:avp.map(x=>({x:x.actual,y:x.predicted})),backgroundColor:'rgba(26,71,49,.55)',pointRadius:3},{label:'Ideal Fit',data:[{x:minV,y:minV},{x:maxV,y:maxV}],type:'line',borderColor:'#c8520a',borderDash:[5,4],pointRadius:0,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9},boxWidth:10}}},scales:{x:{title:{display:true,text:'Actual Yield',font:{size:9}},ticks:{font:{size:8}}},y:{title:{display:true,text:'Predicted Yield',font:{size:9}},ticks:{font:{size:8}}}}}});
+
+  // Residuals
+  const resids=d.residuals_data;
+  new Chart(document.getElementById('residChart'),{type:'scatter',data:{datasets:[{label:'Residuals',data:resids.map(r=>({x:r.predicted,y:r.residual})),backgroundColor:'rgba(155,111,190,.55)',pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Predicted Yield',font:{size:9}},ticks:{font:{size:8}}},y:{title:{display:true,text:'Residual',font:{size:9}},ticks:{font:{size:8}}}},annotation:{annotations:[{type:'line',yMin:0,yMax:0,borderColor:'#c8520a',borderWidth:1.5,borderDash:[5,4]}]}}});
+
+  // Crop avg
+  new Chart(document.getElementById('cropChart'),{type:'bar',data:{labels:Object.keys(d.crop_avg),datasets:[{data:Object.values(d.crop_avg),backgroundColor:PAL,borderRadius:7,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>v.raw.toLocaleString()+' hg/ha'}}},scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:9}}},x:{grid:{display:false},ticks:{font:{size:9}}}}}});
+
+  // Season doughnut
+  new Chart(document.getElementById('seasonChart'),{type:'doughnut',data:{labels:Object.keys(d.season_avg).map(s=>s.charAt(0).toUpperCase()+s.slice(1)),datasets:[{data:Object.values(d.season_avg),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10,padding:8}},tooltip:{callbacks:{label:v=>v.raw.toLocaleString()+' hg/ha'}}}}});
+
+  // SHAP bars
+  const si=d.shap_importance;
+  const siEntries=Object.entries(si).sort((a,b)=>b[1]-a[1]);
+  const maxSi=siEntries[0][1];
+  const shapLabels={avg_rainfall:'Avg Rainfall',pesticides_tonnes:'Pesticides',avg_temp:'Avg Temperature',Radiation:'Solar Radiation',Season:'Season',Crop:'Crop Type'};
+  document.getElementById('shapBars').innerHTML=siEntries.map(([k,v])=>`
+    <div class="fi-row">
+      <div class="fi-name">${shapLabels[k]||k}</div>
+      <div class="fi-bw"><div class="fi-b" data-w="${(v/maxSi*100).toFixed(1)}" style="width:0%"></div></div>
+      <div class="fi-pct">${(v/maxSi*100).toFixed(1)}%</div>
+    </div>`).join('');
+  setTimeout(()=>document.querySelectorAll('.fi-b').forEach(b=>b.style.width=b.dataset.w+'%'),200);
+
+  // Model table
+  const tbody=document.querySelector('#modelTbl tbody');
+  tbody.innerHTML=MODEL_NAMES.map(name=>{
+    const m=d.model_results[name];
+    const best=name==='CatBoost';
+    return `<tr class="${best?'best-row':''}">
+      <td>${name}${best?'<span class="best-badge">Best</span>':''}</td>
+      <td>${m?.MSE?.toLocaleString()||'-'}</td>
+      <td class="r2-cell" style="color:var(--g1)">${m?.R2||'-'}</td>
+      <td>${m?.MAE?.toLocaleString()||'-'}</td>
+      <td style="font-size:.72rem;color:${best?'var(--g1)':'var(--muted)'}">${best?'✓ Primary':'Compared'}</td>
+    </tr>`;
+  }).join('');
+
+  // Heatmap
+  const hm=d.heatmap;
+  const allVals=CROPS.flatMap(c=>SEASONS.map(s=>hm[c]?.[s]||0));
+  const hmMax=Math.max(...allVals);
+  let htHtml=`<tr><th>Crop \\ Season</th>${SEASONS.map(s=>`<th>${s}</th>`).join('')}</tr>`;
+  CROPS.forEach(crop=>{
+    htHtml+=`<tr><td class="rl">${crop}</td>`;
+    SEASONS.forEach(s=>{
+      const v=hm[crop]?.[s]||0;
+      const pct=v/hmMax;
+      const alpha=0.08+0.72*pct;
+      htHtml+=`<td style="background:rgba(26,71,49,${alpha});color:${pct>.5?'#fff':'var(--ink)'};font-weight:600;font-size:.75rem">${v.toLocaleString()}</td>`;
+    });
+    htHtml+='</tr>';
+  });
+  document.getElementById('hmapTbl').innerHTML=htHtml;
+}
+load();
+</script>
+{% endblock %}

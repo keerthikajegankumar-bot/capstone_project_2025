@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}AgroMind{% endblock %} | AI Crop Yield Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --g1:#1a4731;--g2:#276749;--g3:#3d8b63;--g4:#6ab187;--g5:#a8d5b5;--g6:#d4edda;--g7:#f0f9f3;
+  --o1:#c8520a;--o2:#e8742a;--gold:#c9963a;
+  --ink:#1c2b1e;--slate:#3d5445;--muted:#7a9480;--border:#cde0d2;
+  --white:#ffffff;--cream:#f7faf8;
+  --sh:0 2px 12px rgba(26,71,49,.08);--shm:0 8px 32px rgba(26,71,49,.12);--shl:0 20px 60px rgba(26,71,49,.15);
+  --r:16px;--rs:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:64px;padding:0 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(247,250,248,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-box{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--g1),var(--g3));display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.logo-name{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--g1);font-weight:700}
+.logo-name span{color:var(--o1)}
+.navlinks{display:flex;gap:1.6rem;list-style:none}
+.navlinks a{text-decoration:none;font-size:.85rem;font-weight:500;color:var(--slate);transition:color .2s;position:relative;padding-bottom:2px}
+.navlinks a:hover,.navlinks a.act{color:var(--g1)}
+.navlinks a.act::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--g2);border-radius:1px}
+.nav-cta{background:var(--g1);color:#fff;padding:9px 20px;border-radius:50px;font-size:.82rem;font-weight:600;text-decoration:none;transition:all .2s}
+.nav-cta:hover{background:var(--g2);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;border:none;background:none;padding:4px}
+.hamburger span{width:22px;height:2px;background:var(--ink);border-radius:1px}
+.mob-nav{display:none;position:fixed;top:64px;left:0;right:0;background:var(--white);border-bottom:1px solid var(--border);padding:18px 5%;flex-direction:column;gap:14px;z-index:499}
+.mob-nav a{font-size:.92rem;font-weight:500;color:var(--slate);text-decoration:none}
+.mob-nav a.act{color:var(--g1);font-weight:600}
+
+/* PAGE HERO */
+.page-hero{padding:110px 5% 60px;background:linear-gradient(160deg,var(--white) 0%,var(--g7) 100%);border-bottom:1px solid var(--border)}
+.page-hero-wrap{max-width:860px}
+.chip{display:inline-flex;align-items:center;gap:7px;background:rgba(26,71,49,.08);color:var(--g1);padding:6px 15px;border-radius:50px;font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;margin-bottom:18px}
+.chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--g3)}
+h1.ptitle{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.15;color:var(--ink);margin-bottom:14px}
+h1.ptitle .hl{color:var(--g2)}
+.pdesc{font-size:.95rem;color:var(--slate);line-height:1.75;font-weight:300;max-width:560px}
+
+/* SECTIONS */
+.sec{padding:68px 5%}
+.sec-wrap{max-width:1100px;margin:0 auto}
+.sec-label{font-size:.7rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'';width:18px;height:2px;background:var(--g2);border-radius:1px}
+h2.stitle{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.3rem);margin-bottom:10px;line-height:1.2}
+.ssub{font-size:.9rem;color:var(--slate);line-height:1.7;font-weight:300;max-width:500px}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh)}
+
+/* BUTTONS */
+.btn{display:inline-block;padding:12px 28px;border-radius:50px;font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:all .25s}
+.btn-green{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;box-shadow:0 5px 18px rgba(26,71,49,.25)}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 9px 26px rgba(26,71,49,.32)}
+.btn-outline{background:transparent;color:var(--g1);border:2px solid var(--g1)}
+.btn-outline:hover{background:var(--g1);color:#fff}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:12px 20px;border-radius:var(--rs);font-size:.84rem;font-weight:500;box-shadow:var(--shl);pointer-events:none;transform:translateY(60px);opacity:0;transition:all .35s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--g1);color:#fff}
+.toast.err{background:#b91c1c;color:#fff}
+.spin{display:inline-block;width:16px;height:16px;vertical-align:middle;margin-right:7px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .65s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* FOOTER */
+footer{background:var(--g1);color:rgba(255,255,255,.7);padding:52px 5% 28px}
+.foot-inner{max-width:1100px;margin:0 auto}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px;margin-bottom:36px}
+.foot-brand{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;margin-bottom:10px}
+.foot-tagline{font-size:.8rem;line-height:1.7;max-width:260px}
+.foot-col h4{font-size:.7rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:13px}
+.foot-col ul{list-style:none}
+.foot-col li{margin-bottom:8px}
+.foot-col a{color:rgba(255,255,255,.65);text-decoration:none;font-size:.82rem;transition:color .2s}
+.foot-col a:hover{color:#fff}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;text-align:center;font-size:.76rem;color:rgba(255,255,255,.35)}
+.foot-bottom strong{color:var(--g5)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .navlinks,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .foot-grid{grid-template-columns:1fr}
+  .sec{padding:50px 4%}
+  .page-hero{padding:90px 4% 48px}
+}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">
+    <div class="logo-box">🌾</div>
+    <div class="logo-name">AgroMind<span>AI</span></div>
+  </a>
+  <ul class="navlinks">
+    <li><a href="/" {% if p=='home' %}class="act"{% endif %}>Home</a></li>
+    <li><a href="/predict" {% if p=='predict' %}class="act"{% endif %}>Predict</a></li>
+    <li><a href="/analytics" {% if p=='analytics' %}class="act"{% endif %}>Analytics</a></li>
+    <li><a href="/dataset" {% if p=='dataset' %}class="act"{% endif %}>Dataset</a></li>
+    <li><a href="/about" {% if p=='about' %}class="act"{% endif %}>About</a></li>
+  </ul>
+  <a href="/predict" class="nav-cta">Try Prediction →</a>
+  <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mob-nav" id="mobnav">
+  <a href="/" {% if p=='home' %}class="act"{% endif %}>Home</a>
+  <a href="/predict" {% if p=='predict' %}class="act"{% endif %}>Predict Yield</a>
+  <a href="/analytics" {% if p=='analytics' %}class="act"{% endif %}>Analytics</a>
+  <a href="/dataset" {% if p=='dataset' %}class="act"{% endif %}>Dataset</a>
+  <a href="/about" {% if p=='about' %}class="act"{% endif %}>About</a>
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">🌾 AgroMindAI</div>
+        <p class="foot-tagline">AI-Powered Crop Yield Prediction Using Climate Data. B.Sc. Data Science Capstone 2025 — M.O.P. Vaishnav College for Women, Chennai.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/predict">Predict Yield</a></li>
+          <li><a href="/analytics">Analytics</a></li>
+          <li><a href="/dataset">Dataset</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Models Used</h4>
+        <ul>
+          <li><a href="#">CatBoost ✓ Best</a></li>
+          <li><a href="#">XGBoost</a></li>
+          <li><a href="#">LightGBM</a></li>
+          <li><a href="#">Random Forest</a></li>
+          <li><a href="#">Decision Tree</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      Capstone 2025 &nbsp;·&nbsp; Student: <strong>Keerthika J</strong> &nbsp;·&nbsp; Guide: <strong>Ms. Aparna R</strong>, Asst. Professor &nbsp;·&nbsp; Dept. of IT & CS, M.O.P. Vaishnav College for Women, Chennai – 600 034
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script>
+document.getElementById('ham').addEventListener('click',()=>{
+  const m=document.getElementById('mobnav');
+  m.style.display=m.style.display==='flex'?'none':'flex';
+});
+document.querySelectorAll('#mobnav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mobnav').style.display='none'));
+function toast(msg,t='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+t+' show';setTimeout(()=>el.classList.remove('show'),3200)}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

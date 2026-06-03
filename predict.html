@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block title %}Predict Yield{% endblock %}
+{% set p="predict" %}
+{% block extra_head %}
+<style>
+.predict-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1100px;margin:48px auto 0;align-items:start}
+.form-card,.result-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:32px}
+.fc-title{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:4px}
+.fc-sub{font-size:.78rem;color:var(--muted);margin-bottom:24px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:.73rem;font-weight:600;color:var(--slate);margin-bottom:6px;letter-spacing:.3px}
+.fg input,.fg select{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'Inter',sans-serif;font-size:.86rem;color:var(--ink);background:var(--cream);outline:none;transition:border-color .2s,box-shadow .2s}
+.fg input:focus,.fg select:focus{border-color:var(--g3);box-shadow:0 0 0 3px rgba(61,139,99,.1)}
+.fg .hint{font-size:.67rem;color:var(--muted);margin-top:4px}
+.model-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:16px}
+.mpill{padding:7px 8px;border-radius:var(--rs);font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--cream);color:var(--slate);text-align:center;transition:all .2s;user-select:none}
+.mpill:hover,.mpill.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.mpill.best-m{border-color:var(--gold);color:var(--gold)}
+.mpill.best-m.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pred-btn{width:100%;padding:14px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border-radius:var(--rs);font-family:'Inter',sans-serif;font-size:.93rem;font-weight:700;transition:all .3s;letter-spacing:.3px;margin-top:6px}
+.pred-btn:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(26,71,49,.28)}
+.pred-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.samples{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.sbtn{padding:5px 13px;border-radius:50px;font-size:.7rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--cream);color:var(--slate);transition:all .2s}
+.sbtn:hover{border-color:var(--g3);color:var(--g1);background:rgba(61,139,99,.06)}
+
+/* result */
+.result-card{min-height:420px;display:flex;flex-direction:column;justify-content:center}
+.empty-state{text-align:center;color:var(--muted)}
+.empty-icon{font-size:3.2rem;margin-bottom:14px;opacity:.3}
+.empty-state p{font-size:.83rem;line-height:1.65}
+.tips-box{margin-top:18px;background:var(--cream);border-radius:var(--rs);padding:14px;border:1px solid var(--border);text-align:left}
+.tips-box h4{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.tips-box p{font-size:.76rem;color:var(--slate);line-height:1.7}
+.result-body{display:none}
+.res-crop-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(26,71,49,.09);color:var(--g1);padding:5px 14px;border-radius:50px;font-size:.76rem;font-weight:600;margin-bottom:16px}
+.yield-hero{background:linear-gradient(135deg,var(--g1),var(--g3));border-radius:18px;padding:26px;color:#fff;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.yield-hero::before{content:'';position:absolute;top:-28px;right:-28px;width:85px;height:85px;border-radius:50%;background:rgba(255,255,255,.08)}
+.yh-lbl{font-size:.66rem;letter-spacing:1px;text-transform:uppercase;opacity:.72;margin-bottom:7px}
+.yh-val{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;line-height:1}
+.yh-unit{font-size:.77rem;opacity:.75;margin-top:4px}
+.yh-range{display:flex;justify-content:space-between;margin-top:11px;font-size:.73px;opacity:.7;font-size:.73rem}
+.r-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.rm{background:var(--cream);border-radius:var(--rs);padding:13px;border:1px solid var(--border)}
+.rm .k{font-size:.63rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.rm .v{font-size:.96rem;font-weight:700;color:var(--ink)}
+.comp-up{color:var(--g2)}.comp-dn{color:var(--o1)}
+
+/* SHAP section */
+.shap-section{margin-top:14px;padding:14px;background:var(--g7);border-radius:var(--rs);border:1px solid var(--border)}
+.shap-title{font-size:.7rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--g1);margin-bottom:10px}
+.shap-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.shap-feat{font-size:.74rem;color:var(--slate);font-weight:500;width:110px;flex-shrink:0}
+.shap-bar-wrap{flex:1;background:var(--border);border-radius:50px;height:7px;position:relative}
+.shap-bar-pos{height:7px;border-radius:50px;background:var(--g2);transition:width .8s ease}
+.shap-bar-neg{height:7px;border-radius:50px;background:var(--o1);transition:width .8s ease}
+.shap-val{font-size:.7rem;font-weight:700;width:60px;text-align:right;flex-shrink:0}
+
+/* recommendations */
+.recs-section{margin-top:14px;padding:14px;background:#fff8f0;border-radius:var(--rs);border:1px solid #f0d9c0}
+.recs-title{font-size:.7rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--o1);margin-bottom:10px}
+.rec-item{display:flex;gap:8px;margin-bottom:8px;font-size:.77rem;color:var(--slate);line-height:1.5}
+.rec-item::before{content:'→';color:var(--o2);font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* info strip */
+.info-strip{background:var(--white);border-top:1px solid var(--border);padding:38px 5%}
+.info-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.info-item{text-align:center;padding:18px}
+.info-icon{font-size:1.8rem;margin-bottom:9px}
+.info-t{font-size:.8rem;font-weight:700;color:var(--ink);margin-bottom:5px}
+.info-d{font-size:.73rem;color:var(--muted);line-height:1.6}
+
+@media(max-width:900px){.predict-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr}.model-picker{grid-template-columns:repeat(3,1fr)}.info-inner{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.r-metrics{grid-template-columns:1fr}.model-picker{grid-template-columns:repeat(2,1fr)}.info-inner{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="page-hero-wrap">
+    <div class="chip">🔬 AI Prediction Engine</div>
+    <h1 class="ptitle">Predict <span class="hl">Crop Yield</span></h1>
+    <p class="pdesc">Select any of 7 ML models. Enter climate parameters. Get instant yield prediction with SHAP feature importance and actionable farming recommendations.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-wrap">
+    <div class="predict-grid">
+
+      <!-- FORM -->
+      <div class="form-card">
+        <div class="fc-title">Farm Parameters</div>
+        <div class="fc-sub">All 6 fields required · Select model below</div>
+
+        <div style="margin-bottom:14px">
+          <div style="font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Select ML Model</div>
+          <div class="model-picker">
+            <div class="mpill best-m on" data-model="CatBoost">CatBoost ★</div>
+            <div class="mpill" data-model="XGBoost">XGBoost</div>
+            <div class="mpill" data-model="LightGBM">LightGBM</div>
+            <div class="mpill" data-model="Random Forest">Rnd Forest</div>
+            <div class="mpill" data-model="Decision Tree">Dec Tree</div>
+            <div class="mpill" data-model="KNN">KNN</div>
+            <div class="mpill" data-model="SVR">SVR</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <div class="fg">
+            <label>Crop Type</label>
+            <select id="cropSel">
+              <option value="">Select crop…</option>
+              {% for c in meta.crops %}<option value="{{c}}">{{c}}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="fg">
+            <label>Growing Season</label>
+            <select id="seasonSel">
+              <option value="">Select season…</option>
+              {% for s in meta.seasons %}<option value="{{s}}">{{s|capitalize}}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label>Avg Rainfall (mm)</label>
+            <input type="number" id="rainfall" placeholder="e.g. 600" min="0" max="3000" step="0.1">
+            <div class="hint">Annual average rainfall</div>
+          </div>
+          <div class="fg">
+            <label>Avg Temperature (°C)</label>
+            <input type="number" id="temp" placeholder="e.g. 26" min="0" max="50" step="0.1">
+            <div class="hint">Mean growing-period temp</div>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label>Pesticides (tonnes)</label>
+            <input type="number" id="pest" placeholder="e.g. 10" min="0" max="200" step="0.01">
+            <div class="hint">Total pesticide usage</div>
+          </div>
+          <div class="fg">
+            <label>Solar Radiation (MJ/m²)</label>
+            <input type="number" id="rad" placeholder="e.g. 7.5" min="0" max="20" step="0.01">
+            <div class="hint">Average solar radiation</div>
+          </div>
+        </div>
+
+        <button class="pred-btn" id="pBtn" onclick="runPredict()">🌾 Predict Crop Yield</button>
+
+        <div class="samples">
+          <span style="font-size:.7rem;color:var(--muted);font-weight:600;align-self:center">Samples:</span>
+          <button class="sbtn" onclick="fill('Rice','monsoon',604,12,26,7.2)">🌾 Rice</button>
+          <button class="sbtn" onclick="fill('Wheat','winter',280,6,18,5.8)">🌿 Wheat</button>
+          <button class="sbtn" onclick="fill('Maize','summer',414,8,29,8.5)">🌽 Maize</button>
+          <button class="sbtn" onclick="fill('Potatoes','post-monsoon',350,15,20,6.1)">🥔 Potatoes</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="result-card">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">🌱</div>
+          <p>Your prediction will appear here.<br>Fill the form and click <strong>Predict</strong>.</p>
+          <div class="tips-box">
+            <h4>💡 Quick Tips</h4>
+            <p>
+              🌾 Rice needs rainfall &gt; 400mm<br>
+              🌿 Wheat grows best at 15–25°C<br>
+              🥔 Potatoes yield highest on average<br>
+              ☀️ Post-monsoon season peaks for most crops<br>
+              📉 CatBoost gives best accuracy (R²=0.9849)
+            </p>
+          </div>
+        </div>
+        <div class="result-body" id="resultBody">
+          <div class="res-crop-tag" id="rTag">🌾 Rice · Monsoon</div>
+          <div class="yield-hero">
+            <div class="yh-lbl" id="rModel">CatBoost Prediction</div>
+            <div class="yh-val" id="rVal">–</div>
+            <div class="yh-unit">hg / ha (hectogram per hectare)</div>
+            <div class="yh-range">
+              <span>Low: <strong id="rLow">–</strong></span>
+              <span>High: <strong id="rHigh">–</strong></span>
+            </div>
+          </div>
+          <div class="r-metrics">
+            <div class="rm"><div class="k">Tonnes per Hectare</div><div class="v" id="rTonnes">–</div></div>
+            <div class="rm"><div class="k">vs Crop Average</div><div class="v" id="rComp">–</div></div>
+            <div class="rm"><div class="k">Model Used</div><div class="v" id="rModelName" style="font-size:.82rem">CatBoost</div></div>
+            <div class="rm"><div class="k">Confidence Band</div><div class="v" style="color:var(--g2)">±10%</div></div>
+          </div>
+
+          <!-- SHAP -->
+          <div class="shap-section">
+            <div class="shap-title">🔍 SHAP Feature Importance (CatBoost)</div>
+            <div id="shapRows"></div>
+            <div style="font-size:.67rem;color:var(--muted);margin-top:6px">Green = positive impact on yield &nbsp;|&nbsp; Orange = negative impact</div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="recs-section">
+            <div class="recs-title">💡 AI Recommendations</div>
+            <div id="recRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-inner">
+    <div class="info-item"><div class="info-icon">🏆</div><div class="info-t">CatBoost Best</div><div class="info-d">R²=0.9849, MSE=29.9M — best among all 7 models trained.</div></div>
+    <div class="info-item"><div class="info-icon">🔍</div><div class="info-t">SHAP Values</div><div class="info-d">Each prediction shows which climate factor helped or hurt yield most.</div></div>
+    <div class="info-item"><div class="info-icon">📏</div><div class="info-t">hg/ha Unit</div><div class="info-d">Divide by 10,000 to get tonnes per hectare for practical reference.</div></div>
+    <div class="info-item"><div class="info-icon">⚡</div><div class="info-t">7 Models</div><div class="info-d">Switch between RF, SVR, KNN, DT, XGBoost, LightGBM, CatBoost instantly.</div></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selModel='CatBoost';
+document.querySelectorAll('.mpill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.mpill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on');
+    selModel=p.dataset.model;
+  });
+});
+
+function fill(crop,season,rain,pest,temp,rad){
+  document.getElementById('cropSel').value=crop;
+  document.getElementById('seasonSel').value=season;
+  document.getElementById('rainfall').value=rain;
+  document.getElementById('pest').value=pest;
+  document.getElementById('temp').value=temp;
+  document.getElementById('rad').value=rad;
+  toast('Sample loaded: '+crop+' ('+season+')','ok');
+}
+
+const icons={Rice:'🌾',Wheat:'🌿',Maize:'🌽',Soybeans:'🫘',Potatoes:'🥔'};
+
+async function runPredict(){
+  const crop=document.getElementById('cropSel').value;
+  const season=document.getElementById('seasonSel').value;
+  const rainfall=document.getElementById('rainfall').value;
+  const temp=document.getElementById('temp').value;
+  const pesticides=document.getElementById('pest').value;
+  const radiation=document.getElementById('rad').value;
+  if(!crop||!season||!rainfall||!temp||!pesticides||!radiation){
+    toast('⚠️ Please fill all 6 fields','err');return;
+  }
+  const btn=document.getElementById('pBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Running '+selModel+'…';
+  try{
+    const res=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({crop,season,rainfall,temp,pesticides,radiation,model:selModel})});
+    const d=await res.json();
+    if(d.success) showResult(d);
+    else toast('Error: '+d.error,'err');
+  }catch(e){toast('Server error','err');}
+  btn.disabled=false;btn.innerHTML='🌾 Predict Crop Yield';
+}
+
+function showResult(d){
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('resultBody').style.display='block';
+  document.getElementById('rTag').textContent=(icons[d.crop]||'🌾')+' '+d.crop+' · '+d.season;
+  document.getElementById('rModel').textContent=d.model+' Prediction';
+  document.getElementById('rModelName').textContent=d.model;
+  document.getElementById('rVal').textContent=d.pred.toLocaleString();
+  document.getElementById('rLow').textContent=d.low.toLocaleString();
+  document.getElementById('rHigh').textContent=d.high.toLocaleString();
+  document.getElementById('rTonnes').textContent=d.tonnes+' t/ha';
+  const comp=document.getElementById('rComp');
+  const s=d.comparison>=0?'+':'';
+  comp.innerHTML=`<span class="${d.comparison>=0?'comp-up':'comp-dn'}">${s+d.comparison}%</span>`;
+
+  // SHAP bars
+  const maxShap=Math.max(...d.shap.map(s=>Math.abs(s.shap)));
+  document.getElementById('shapRows').innerHTML=d.shap.map(s=>{
+    const w=maxShap>0?Math.abs(s.shap)/maxShap*100:0;
+    const pos=s.shap>=0;
+    return `<div class="shap-row">
+      <div class="shap-feat">${s.feature}</div>
+      <div class="shap-bar-wrap"><div class="${pos?'shap-bar-pos':'shap-bar-neg'}" style="width:${w.toFixed(1)}%"></div></div>
+      <div class="shap-val" style="color:${pos?'var(--g2)':'var(--o1)'}">${s.shap>=0?'+':''}${s.shap.toFixed(0)}</div>
+    </div>`;
+  }).join('');
+
+  // Recommendations
+  document.getElementById('recRows').innerHTML=d.recommendations.map(r=>`<div class="rec-item">${r}</div>`).join('');
+  toast('✅ Prediction complete!','ok');
+}
+</script>
+{% endblock %}

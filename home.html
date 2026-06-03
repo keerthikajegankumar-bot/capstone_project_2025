@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% set p="home" %}
+{% block extra_head %}
+<style>
+.hero{min-height:100vh;display:flex;align-items:center;padding:80px 5% 60px;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--white) 0%,var(--g7) 60%,var(--white) 100%)}
+.hero::before{content:'';position:absolute;top:-200px;right:-150px;width:500px;height:500px;background:radial-gradient(circle,rgba(61,139,99,.1) 0%,transparent 68%);border-radius:50%;pointer-events:none}
+.hero-inner{max-width:1120px;margin:0 auto;width:100%;display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,71,49,.09);color:var(--g1);padding:7px 16px;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(26,71,49,.15)}
+h1.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,5vw,3.8rem);line-height:1.1;margin-bottom:20px;color:var(--ink)}
+.hero-title .gr{color:var(--g2)}.hero-title .or{color:var(--o1)}
+.hero-lead{font-size:1rem;color:var(--slate);line-height:1.78;font-weight:300;margin-bottom:32px;max-width:480px}
+.hero-lead strong{color:var(--g1);font-weight:600}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.hero-divider{width:48px;height:2px;background:var(--border);margin-bottom:30px}
+.stat-row{display:flex;gap:32px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-n{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--g1);display:block;line-height:1}
+.stat-l{font-size:.65rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* hero card */
+.hero-card-wrap{position:relative}
+.hcard{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--shl);border:1px solid var(--border);position:relative;overflow:hidden}
+.hcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g1),var(--gold),var(--o1))}
+.float-tag{position:absolute;top:-13px;right:20px;background:var(--gold);color:var(--ink);padding:6px 14px;border-radius:50px;font-size:.7rem;font-weight:700;box-shadow:var(--sh)}
+.hc-lbl{font-size:.67rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.crop-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:15px}
+.ctab{background:var(--cream);border:1.5px solid var(--border);border-radius:50px;padding:7px 10px;text-align:center;font-size:.76rem;font-weight:500;color:var(--slate);cursor:pointer;transition:all .2s;user-select:none}
+.ctab:hover,.ctab.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.yield-box{background:linear-gradient(135deg,var(--g1),var(--g3));border-radius:14px;padding:22px;color:#fff;text-align:center;margin-bottom:13px;position:relative;overflow:hidden}
+.yield-box::before{content:'';position:absolute;top:-30px;right:-30px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.08)}
+.yb-lbl{font-size:.67rem;letter-spacing:1px;text-transform:uppercase;opacity:.75;margin-bottom:7px}
+.yb-val{font-family:'Playfair Display',serif;font-size:2.3rem;font-weight:700;line-height:1}
+.yb-unit{font-size:.73rem;opacity:.7;margin-top:3px}
+.hc-mini{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.hc-mini-item{background:var(--cream);border-radius:9px;padding:11px 13px;border:1px solid var(--border)}
+.hc-mini-item .k{font-size:.63rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted)}
+.hc-mini-item .v{font-size:.85rem;font-weight:700;color:var(--ink);margin-top:3px}
+
+/* features */
+.feat-sec{background:var(--white);padding:72px 5%;border-top:1px solid var(--border)}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+.feat-card{background:var(--cream);border-radius:var(--r);padding:26px 20px;border:1px solid var(--border);transition:transform .2s,box-shadow .2s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:var(--shm)}
+.feat-icon{font-size:1.9rem;margin-bottom:13px}
+.feat-title{font-family:'Playfair Display',serif;font-size:.98rem;margin-bottom:7px;font-weight:500}
+.feat-desc{font-size:.78rem;color:var(--muted);line-height:1.65}
+
+/* model comparison */
+.model-sec{padding:72px 5%;background:var(--g7)}
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:44px}
+.mc{background:var(--white);border-radius:var(--r);padding:22px;border:1px solid var(--border);box-shadow:var(--sh);text-align:center;position:relative;overflow:hidden}
+.mc.best{border-color:var(--g3);box-shadow:0 6px 28px rgba(26,71,49,.16)}
+.mc.best::before{content:'Best Model';position:absolute;top:10px;right:10px;background:var(--g1);color:#fff;font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:50px}
+.mc-name{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px}
+.mc-r2{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--g1)}
+.mc-bar-wrap{background:var(--border);border-radius:50px;height:5px;margin:9px 0}
+.mc-bar{height:5px;border-radius:50px;background:linear-gradient(90deg,var(--g5),var(--g1));transition:width 1.2s ease}
+.mc-mse{font-size:.68rem;color:var(--muted)}
+
+/* cta */
+.cta-sec{background:linear-gradient(135deg,var(--g1),var(--g2));padding:76px 5%}
+.cta-wrap{max-width:680px;margin:0 auto;text-align:center}
+.cta-wrap h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.5rem);color:#fff;margin-bottom:14px}
+.cta-wrap p{font-size:.93rem;color:rgba(255,255,255,.78);line-height:1.72;margin-bottom:30px;font-weight:300}
+.cta-btn{background:#fff;color:var(--g1);padding:15px 38px;border-radius:50px;font-size:.92rem;font-weight:700;text-decoration:none;transition:all .25s;display:inline-block}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.18)}
+
+@media(max-width:1024px){.hero-inner{grid-template-columns:1fr}.hero-card-wrap{display:none}.feat-grid{grid-template-columns:repeat(2,1fr)}.model-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.feat-grid{grid-template-columns:1fr}.model-grid{grid-template-columns:1fr}.stat-row{gap:18px}}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">🎓 B.Sc. Data Science Capstone 2025</div>
+      <h1 class="hero-title">
+        <span class="gr">AI-Powered</span> Crop<br>
+        Yield <span class="or">Prediction</span>
+      </h1>
+      <p class="hero-lead">
+        Using <strong>CatBoost, XGBoost, LightGBM</strong> and 4 other ML models with <strong>SHAP & LIME explainability</strong> to predict crop yield from climate data — with 98.49% R² accuracy.
+      </p>
+      <div class="hero-btns">
+        <a href="/predict" class="btn btn-green">🔬 Predict Yield Now</a>
+        <a href="/analytics" class="btn btn-outline">📊 Analytics</a>
+      </div>
+      <div class="hero-divider"></div>
+      <div class="stat-row">
+        <div class="stat-item"><span class="stat-n">2,800</span><span class="stat-l">Records</span></div>
+        <div class="stat-item"><span class="stat-n">7</span><span class="stat-l">ML Models</span></div>
+        <div class="stat-item"><span class="stat-n">98.49%</span><span class="stat-l">R² Score</span></div>
+        <div class="stat-item"><span class="stat-n">SHAP+LIME</span><span class="stat-l">Explainability</span></div>
+      </div>
+    </div>
+    <div class="hero-card-wrap">
+      <div class="float-tag">🏆 CatBoost Best</div>
+      <div class="hcard">
+        <div class="hc-lbl">Live Crop Insight</div>
+        <div class="crop-tabs">
+          <div class="ctab on" onclick="pickCrop(this,'Rice',33513)">🌾 Rice</div>
+          <div class="ctab" onclick="pickCrop(this,'Wheat',24745)">🌿 Wheat</div>
+          <div class="ctab" onclick="pickCrop(this,'Maize',29060)">🌽 Maize</div>
+          <div class="ctab" onclick="pickCrop(this,'Soybeans',15980)">🫘 Soy</div>
+          <div class="ctab" onclick="pickCrop(this,'Potatoes',137730)">🥔 Potato</div>
+        </div>
+        <div class="yield-box">
+          <div class="yb-lbl" id="ybLbl">Average Yield — Rice</div>
+          <div class="yb-val" id="ybVal">33,513</div>
+          <div class="yb-unit">hg / ha (hectogram per hectare)</div>
+        </div>
+        <div class="hc-mini">
+          <div class="hc-mini-item"><div class="k">Best Model</div><div class="v">CatBoost</div></div>
+          <div class="hc-mini-item"><div class="k">R² Score</div><div class="v" style="color:var(--g2)">0.9849</div></div>
+          <div class="hc-mini-item"><div class="k">Explainability</div><div class="v">SHAP + LIME</div></div>
+          <div class="hc-mini-item"><div class="k">Dataset</div><div class="v">2,800 records</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-sec">
+  <div class="sec-wrap">
+    <div class="sec-label">What We Built</div>
+    <h2 class="stitle">Complete AI Agriculture Pipeline</h2>
+    <p class="ssub">Every step from your capstone document — data preprocessing, 7 ML models, SHAP, LIME, evaluation metrics, Flask deployment.</p>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Data Collection & Preprocessing</div><div class="feat-desc">2,800 records. Missing value imputation, outlier removal, label encoding, StandardScaler normalization, 80/20 train-test split.</div></div>
+      <div class="feat-card"><div class="feat-icon">🌲</div><div class="feat-title">7 ML Regression Models</div><div class="feat-desc">Random Forest, SVR, KNN, Decision Tree, XGBoost, LightGBM, CatBoost — all trained and compared on MSE, MAE and R².</div></div>
+      <div class="feat-card"><div class="feat-icon">🔍</div><div class="feat-title">SHAP + LIME Explainability</div><div class="feat-desc">SHapley Additive Explanations show which climate factors drive each prediction. LIME provides local interpretability.</div></div>
+      <div class="feat-card"><div class="feat-icon">🌐</div><div class="feat-title">Flask Web Deployment</div><div class="feat-desc">Multi-page Flask app — Predict, Analytics, Dataset Explorer, About. Fully responsive for mobile, tablet and desktop.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL COMPARISON -->
+<section class="model-sec">
+  <div class="sec-wrap">
+    <div class="sec-label">Model Comparison</div>
+    <h2 class="stitle">7 Models Trained & Evaluated</h2>
+    <p class="ssub">CatBoost achieved the best R² score of 0.9849, confirming the superiority of gradient boosting for crop yield regression.</p>
+    <div class="model-grid">
+      <div class="mc best"><div class="mc-name">CatBoost</div><div class="mc-r2">0.9849</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="98.49" style="width:0%"></div></div><div class="mc-mse">MSE: 29,927,854</div></div>
+      <div class="mc"><div class="mc-name">LightGBM</div><div class="mc-r2">0.9840</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="98.40" style="width:0%"></div></div><div class="mc-mse">MSE: 31,759,276</div></div>
+      <div class="mc"><div class="mc-name">XGBoost</div><div class="mc-r2">0.9836</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="98.36" style="width:0%"></div></div><div class="mc-mse">MSE: 32,513,825</div></div>
+      <div class="mc"><div class="mc-name">Random Forest</div><div class="mc-r2">0.9836</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="98.36" style="width:0%"></div></div><div class="mc-mse">MSE: 32,637,472</div></div>
+      <div class="mc"><div class="mc-name">Decision Tree</div><div class="mc-r2">0.9698</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="96.98" style="width:0%"></div></div><div class="mc-mse">MSE: 60,043,238</div></div>
+      <div class="mc"><div class="mc-name">KNN</div><div class="mc-r2">0.7989</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="79.89" style="width:0%"></div></div><div class="mc-mse">MSE: 399,717,534</div></div>
+      <div class="mc"><div class="mc-name">SVR</div><div class="mc-r2">-0.077</div><div class="mc-bar-wrap"><div class="mc-bar" data-w="0" style="width:0%"></div></div><div class="mc-mse">Not suitable</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="cta-wrap">
+    <h2>Ready to Predict Your Crop Yield?</h2>
+    <p>Enter rainfall, temperature, radiation and pesticide data. Choose any of 7 ML models. Get instant prediction with SHAP feature importance and actionable recommendations.</p>
+    <a href="/predict" class="cta-btn">Start Predicting →</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function pickCrop(el,name,avg){
+  document.querySelectorAll('.ctab').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ybLbl').textContent='Average Yield — '+name;
+  document.getElementById('ybVal').textContent=avg.toLocaleString();
+}
+const bars=document.querySelectorAll('.mc-bar');
+const obs=new IntersectionObserver(e=>{if(e[0].isIntersecting)bars.forEach(b=>b.style.width=b.dataset.w+'%')},{threshold:.3});
+const mg=document.querySelector('.model-grid');
+if(mg)obs.observe(mg);
+</script>
+{% endblock %}

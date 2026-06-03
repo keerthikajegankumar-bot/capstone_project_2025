@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Dataset{% endblock %}
+{% set p="dataset" %}
+{% block extra_head %}
+<style>
+.ds-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:44px}
+.dss{background:var(--white);border-radius:var(--rs);padding:16px 12px;border:1px solid var(--border);box-shadow:var(--sh);text-align:center}
+.dss-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--g1)}
+.dss-lbl{font-size:.66rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.tbl-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);margin-top:32px;overflow:hidden}
+.tbl-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.tbl-bar-t{font-weight:700;font-size:.88rem}
+.filt-row{display:flex;gap:9px;flex-wrap:wrap}
+.tbl-sel{padding:7px 12px;border:1.5px solid var(--border);border-radius:50px;font-family:'Inter',sans-serif;font-size:.78rem;background:var(--cream);color:var(--slate);outline:none;transition:border-color .2s;cursor:pointer}
+.tbl-sel:focus{border-color:var(--g3)}
+.tbl-scroll{overflow-x:auto;max-height:460px;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+thead{position:sticky;top:0;z-index:2}
+th{background:var(--cream);padding:10px 16px;text-align:left;font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--g1)}
+td{padding:10px 16px;font-size:.82rem;color:var(--slate);border-bottom:1px solid rgba(205,224,210,.4);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(26,71,49,.03)}
+.cb{display:inline-block;padding:3px 9px;border-radius:50px;font-size:.67rem;font-weight:600}
+.cb-Rice{background:rgba(26,71,49,.12);color:var(--g1)}
+.cb-Wheat{background:rgba(201,150,58,.15);color:#96680a}
+.cb-Maize{background:rgba(200,82,10,.12);color:var(--o1)}
+.cb-Soybeans{background:rgba(52,120,190,.12);color:#1a5fa8}
+.cb-Potatoes{background:rgba(120,60,180,.12);color:#6a3fa8}
+.sb{display:inline-block;padding:3px 9px;border-radius:50px;font-size:.67rem;font-weight:500;background:var(--cream);border:1px solid var(--border);color:var(--muted)}
+.yh{color:var(--g2);font-weight:700}.yl{color:var(--o1);font-weight:600}
+.pagination{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.pg-info{font-size:.78rem;color:var(--muted)}
+.pg-btns{display:flex;gap:6px}
+.pgb{padding:5px 13px;border-radius:50px;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--cream);color:var(--slate);transition:all .2s}
+.pgb:hover,.pgb.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.pgb:disabled{opacity:.4;cursor:not-allowed}
+.col-desc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}
+.cd{background:var(--white);border-radius:var(--rs);padding:16px;border:1px solid var(--border)}
+.cd-name{font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--g1);margin-bottom:5px}
+.cd-type{display:inline-block;background:rgba(26,71,49,.08);color:var(--g1);font-size:.63rem;padding:2px 8px;border-radius:50px;margin-bottom:6px}
+.cd-desc{font-size:.76rem;color:var(--slate);line-height:1.55}
+@media(max-width:900px){.ds-stats{grid-template-columns:repeat(3,1fr)}.col-desc{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.ds-stats{grid-template-columns:repeat(2,1fr)}.col-desc{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="page-hero-wrap">
+    <div class="chip">🗃️ Training Data</div>
+    <h1 class="ptitle">Dataset <span class="hl">Explorer</span></h1>
+    <p class="pdesc">Browse all 2,800 agricultural records. Filter by crop or season, sort by any column. These records trained all 7 ML models.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-wrap">
+    <div class="sec-label">Overview</div>
+    <div class="ds-stats">
+      <div class="dss"><div class="dss-val">2,800</div><div class="dss-lbl">Records</div></div>
+      <div class="dss"><div class="dss-val">5</div><div class="dss-lbl">Crops</div></div>
+      <div class="dss"><div class="dss-val">4</div><div class="dss-lbl">Seasons</div></div>
+      <div class="dss"><div class="dss-val">6</div><div class="dss-lbl">Features</div></div>
+      <div class="dss"><div class="dss-val">1</div><div class="dss-lbl">Target (Yield)</div></div>
+    </div>
+
+    <div class="tbl-card">
+      <div class="tbl-bar">
+        <div class="tbl-bar-t">Records <span id="rowCount" style="color:var(--muted);font-weight:400;font-size:.8rem">(loading…)</span></div>
+        <div class="filt-row">
+          <select class="tbl-sel" id="cropFilt" onchange="applyFilter()">
+            <option value="">All Crops</option>
+            <option>Maize</option><option>Potatoes</option><option>Rice</option><option>Soybeans</option><option>Wheat</option>
+          </select>
+          <select class="tbl-sel" id="seasonFilt" onchange="applyFilter()">
+            <option value="">All Seasons</option>
+            <option>monsoon</option><option>post-monsoon</option><option>summer</option><option>winter</option>
+          </select>
+        </div>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th onclick="sortBy('Item')">Crop ↕</th>
+              <th onclick="sortBy('avg_rainfall')">Rainfall (mm) ↕</th>
+              <th onclick="sortBy('pesticides_tonnes')">Pesticides (t) ↕</th>
+              <th onclick="sortBy('avg_temp')">Temp (°C) ↕</th>
+              <th onclick="sortBy('Radiation')">Radiation ↕</th>
+              <th onclick="sortBy('Season')">Season ↕</th>
+              <th onclick="sortBy('hg/ha_yield')">Yield (hg/ha) ↕</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pg-info" id="pgInfo">Page 1</div>
+        <div class="pg-btns" id="pgBtns"></div>
+      </div>
+    </div>
+
+    <div class="sec-label" style="margin-top:48px">Column Reference</div>
+    <h2 class="stitle">Dataset Features</h2>
+    <div class="col-desc">
+      <div class="cd"><div class="cd-name">Item (Crop)</div><span class="cd-type">Categorical</span><div class="cd-desc">Rice, Wheat, Maize, Soybeans, Potatoes. Label-encoded for model training.</div></div>
+      <div class="cd"><div class="cd-name">avg_rainfall</div><span class="cd-type">Numeric · mm</span><div class="cd-desc">Average annual rainfall in millimeters. Most important SHAP feature after crop type.</div></div>
+      <div class="cd"><div class="cd-name">pesticides_tonnes</div><span class="cd-type">Numeric · t</span><div class="cd-desc">Total pesticide usage in tonnes. Overuse degrades soil; underuse increases pest damage.</div></div>
+      <div class="cd"><div class="cd-name">avg_temp</div><span class="cd-type">Numeric · °C</span><div class="cd-desc">Mean temperature during the growing cycle. Extreme temps cause heat stress or frost.</div></div>
+      <div class="cd"><div class="cd-name">Radiation</div><span class="cd-type">Numeric · MJ/m²</span><div class="cd-desc">Solar radiation received. Drives photosynthesis — higher radiation boosts biomass.</div></div>
+      <div class="cd"><div class="cd-name">Season</div><span class="cd-type">Categorical</span><div class="cd-desc">monsoon, post-monsoon, summer, winter. Label-encoded for ML processing.</div></div>
+      <div class="cd"><div class="cd-name">hg/ha_yield 🎯</div><span class="cd-type">Target Variable</span><div class="cd-desc">Crop yield in hectograms per hectare. This is what all 7 ML models predict.</div></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let all=[], filtered=[], sortCol='', sortAsc=true, curPage=1, per=20;
+async function loadAll(){
+  let page=1,total=null;
+  while(total===null||all.length<total){
+    const r=await fetch(`/api/dataset?page=${page}`);
+    const d=await r.json();
+    all=all.concat(d.data);total=d.total;page++;
+    if(d.page>=d.pages)break;
+  }
+  filtered=[...all];render();
+}
+function applyFilter(){
+  const crop=document.getElementById('cropFilt').value;
+  const season=document.getElementById('seasonFilt').value;
+  filtered=all.filter(r=>(!crop||r.Item===crop)&&(!season||r.Season===season));
+  curPage=1;render();
+}
+function sortBy(col){
+  if(sortCol===col)sortAsc=!sortAsc;else{sortCol=col;sortAsc=true;}
+  filtered.sort((a,b)=>{
+    const av=a[col],bv=b[col];
+    if(typeof av==='number')return sortAsc?av-bv:bv-av;
+    return sortAsc?String(av).localeCompare(String(bv)):String(bv).localeCompare(String(av));
+  });
+  curPage=1;render();
+}
+function render(){
+  const start=(curPage-1)*per,end=start+per;
+  const page=filtered.slice(start,end);
+  const totalPages=Math.ceil(filtered.length/per);
+  const maxY=Math.max(...filtered.map(r=>r['hg/ha_yield']));
+  const minY=Math.min(...filtered.map(r=>r['hg/ha_yield']));
+  document.getElementById('rowCount').textContent=`(${filtered.length.toLocaleString()} records)`;
+  document.getElementById('pgInfo').textContent=`Page ${curPage} of ${totalPages}`;
+  document.getElementById('tblBody').innerHTML=page.map((r,i)=>{
+    const y=r['hg/ha_yield'];
+    const cls=y>=maxY*.85?'yh':y<=minY*1.15?'yl':'';
+    return `<tr>
+      <td style="color:var(--muted);font-size:.73rem">${start+i+1}</td>
+      <td><span class="cb cb-${r.Item}">${r.Item}</span></td>
+      <td>${r.avg_rainfall?.toFixed(1)}</td>
+      <td>${r.pesticides_tonnes?.toFixed(2)}</td>
+      <td>${r.avg_temp?.toFixed(1)}</td>
+      <td>${r.Radiation?.toFixed(2)}</td>
+      <td><span class="sb">${r.Season}</span></td>
+      <td class="${cls}">${y?.toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+  let ph='';
+  ph+=`<button class="pgb" onclick="go(${curPage-1})" ${curPage<=1?'disabled':''}>‹</button>`;
+  const s=Math.max(1,curPage-2),e=Math.min(totalPages,curPage+2);
+  for(let pg=s;pg<=e;pg++) ph+=`<button class="pgb ${pg===curPage?'on':''}" onclick="go(${pg})">${pg}</button>`;
+  ph+=`<button class="pgb" onclick="go(${curPage+1})" ${curPage>=totalPages?'disabled':''}>›</button>`;
+  document.getElementById('pgBtns').innerHTML=ph;
+}
+function go(p){curPage=p;render();document.querySelector('.tbl-scroll').scrollTop=0;}
+loadAll();
+</script>
+{% endblock %}

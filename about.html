@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% set p="about" %}
+{% block extra_head %}
+<style>
+.about-grid{display:grid;grid-template-columns:2fr 1fr;gap:40px;max-width:1100px;margin:48px auto 0;align-items:start}
+.info-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:28px;margin-bottom:22px}
+.ic-t{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid var(--border)}
+.ic-row{display:flex;gap:12px;margin-bottom:11px;align-items:flex-start}
+.ic-k{font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);min-width:110px;flex-shrink:0;padding-top:2px}
+.ic-v{font-size:.86rem;color:var(--slate);line-height:1.5}
+.ic-v strong{color:var(--ink);font-weight:600}
+.tl{position:relative;padding-left:26px}
+.tl::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--g1),var(--g5))}
+.tl-item{position:relative;margin-bottom:22px}
+.tl-item::before{content:'';position:absolute;left:-23px;top:4px;width:11px;height:11px;border-radius:50%;background:var(--g1);border:2px solid var(--white);box-shadow:0 0 0 2px var(--g3)}
+.tl-step{font-size:.66rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--g2);margin-bottom:3px}
+.tl-title{font-size:.88rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.tl-desc{font-size:.76rem;color:var(--muted);line-height:1.6}
+.obj-list{list-style:none;padding:0}
+.obj-list li{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid rgba(205,224,210,.5);font-size:.8rem;color:var(--slate);line-height:1.5}
+.obj-list li:last-child{border-bottom:none}
+.obj-list li::before{content:'→';color:var(--g2);font-weight:700;flex-shrink:0;margin-top:1px}
+.abstract-box{background:linear-gradient(135deg,rgba(26,71,49,.05),rgba(200,150,58,.04));border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:22px;position:relative}
+.abstract-box::before{content:'"';position:absolute;top:-8px;left:18px;font-family:'Playfair Display',serif;font-size:4.5rem;color:var(--g5);line-height:1}
+.abstract-text{font-size:.85rem;color:var(--slate);line-height:1.8;font-style:italic;font-weight:300}
+.side-card{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:22px;margin-bottom:18px}
+.sc-t{font-size:.7rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.tech-pill{display:inline-block;padding:4px 11px;border-radius:50px;font-size:.7rem;font-weight:600;margin:3px 3px 0 0;background:rgba(26,71,49,.08);color:var(--g1);border:1px solid rgba(26,71,49,.15)}
+.ref-item{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--border);font-size:.74rem;color:var(--slate);line-height:1.5}
+.ref-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ref-num{font-weight:700;color:var(--g2);margin-right:5px}
+.perf-row{margin-bottom:11px}
+.perf-name{font-size:.75rem;font-weight:700;margin-bottom:3px}
+.perf-meta{font-size:.72rem;color:var(--slate);margin-bottom:4px}
+.perf-bw{background:var(--border);height:5px;border-radius:50px}
+.perf-b{height:5px;border-radius:50px;transition:width 1.2s ease}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="page-hero-wrap">
+    <div class="chip">🎓 Capstone Documentation</div>
+    <h1 class="ptitle">About <span class="hl">This Project</span></h1>
+    <p class="pdesc">B.Sc. Data Science Capstone — AI-Powered Crop Yield Prediction Using Climate Data. Student: Keerthika J · Guide: Ms. Aparna R · M.O.P. Vaishnav College, Chennai.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="about-grid">
+    <div>
+      <div class="info-card">
+        <div class="ic-t">📋 Project Information</div>
+        <div class="ic-row"><div class="ic-k">Title</div><div class="ic-v"><strong>AI-Powered Crop Yield Prediction Using Climate Data</strong></div></div>
+        <div class="ic-row"><div class="ic-k">Student</div><div class="ic-v"><strong>Keerthika J</strong></div></div>
+        <div class="ic-row"><div class="ic-k">Degree</div><div class="ic-v">B.Sc. Data Science — 2024–2025</div></div>
+        <div class="ic-row"><div class="ic-k">College</div><div class="ic-v"><strong>M.O.P. Vaishnav College for Women (Autonomous), Chennai – 600 034</strong></div></div>
+        <div class="ic-row"><div class="ic-k">Department</div><div class="ic-v">Information Technology and Computer Science</div></div>
+        <div class="ic-row"><div class="ic-k">Guide</div><div class="ic-v"><strong>Ms. Aparna R</strong>, Assistant Professor, B.Sc. Data Science</div></div>
+        <div class="ic-row"><div class="ic-k">Best Model</div><div class="ic-v"><strong>CatBoost Regressor</strong> — R²=0.9849, MSE=29,927,854, MAE=3,221</div></div>
+        <div class="ic-row"><div class="ic-k">Explainability</div><div class="ic-v">SHAP (SHapley Additive Explanations) + LIME (Local Interpretable Model-Agnostic)</div></div>
+      </div>
+
+      <div class="abstract-box">
+        <div class="abstract-text">Crop yield prediction is critical for food security and sustainable agriculture. This study develops an AI-powered system using climate data — rainfall, temperature, solar radiation and pesticide usage — to predict crop yield using seven machine learning regression models: Random Forest, SVR, KNN, Decision Tree, XGBoost, LightGBM and CatBoost. CatBoost achieved R²=0.9849. SHAP was applied to interpret model decisions, revealing crop type and rainfall as the most influential predictors. A multi-page Flask web application makes predictions accessible with per-prediction SHAP explanations and AI-driven farming recommendations.</div>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-t">🎯 Objectives</div>
+        <ul class="obj-list">
+          <li>Predict crop yield (hg/ha) accurately using climate and agricultural input data</li>
+          <li>Train and compare 7 ML regression models: RF, SVR, KNN, DT, XGBoost, LightGBM, CatBoost</li>
+          <li>Apply SHAP for global and per-prediction feature importance and interpretability</li>
+          <li>Apply LIME for local model-agnostic explanations of individual predictions</li>
+          <li>Evaluate all models with MSE, MAE and R² on identical 80/20 train-test splits</li>
+          <li>Deploy a responsive multi-page Flask web app with real-time prediction and SHAP output</li>
+          <li>Provide AI-driven farming recommendations based on negative SHAP feature contributions</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <div class="ic-t">⚙️ Methodology — 5-Stage Pipeline</div>
+        <div class="tl">
+          <div class="tl-item">
+            <div class="tl-step">Stage 1</div>
+            <div class="tl-title">Data Collection</div>
+            <div class="tl-desc">2,800 real agricultural records. Features: avg_rainfall (mm), pesticides_tonnes, avg_temp (°C), Radiation (MJ/m²), Season, Item/Crop. Target: hg/ha_yield.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-step">Stage 2</div>
+            <div class="tl-title">Data Preprocessing</div>
+            <div class="tl-desc">Missing value imputation (median/mode). Duplicate removal. Label Encoding for Item and Season columns. StandardScaler normalization. 80/20 train-test split (random_state=42).</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-step">Stage 3</div>
+            <div class="tl-title">EDA & Visualizations</div>
+            <div class="tl-desc">Distribution histograms, box plots, correlation heatmap, season×crop heatmap, actual vs predicted scatter, residual analysis, crop and season yield bar charts.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-step">Stage 4</div>
+            <div class="tl-title">7 Model Training & Evaluation</div>
+            <div class="tl-desc">Random Forest, SVR, KNN, Decision Tree, XGBoost, LightGBM, CatBoost — all trained on identical splits. MSE, MAE, R² computed. CatBoost selected as best model (R²=0.9849).</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-step">Stage 5</div>
+            <div class="tl-title">SHAP + LIME + Flask Deployment</div>
+            <div class="tl-desc">SHAP TreeExplainer on CatBoost for global and local importance. LIME for model-agnostic per-prediction explanations. Flask multi-page app: Home, Predict, Analytics, Dataset, About.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="side-card">
+        <div class="sc-t">🛠️ Tech Stack</div>
+        <span class="tech-pill">Python 3.x</span><span class="tech-pill">Flask</span>
+        <span class="tech-pill">CatBoost</span><span class="tech-pill">XGBoost</span>
+        <span class="tech-pill">LightGBM</span><span class="tech-pill">Scikit-Learn</span>
+        <span class="tech-pill">SHAP</span><span class="tech-pill">LIME</span>
+        <span class="tech-pill">Pandas</span><span class="tech-pill">NumPy</span>
+        <span class="tech-pill">Chart.js</span><span class="tech-pill">Joblib</span>
+        <span class="tech-pill">StandardScaler</span><span class="tech-pill">LabelEncoder</span>
+      </div>
+
+      <div class="side-card">
+        <div class="sc-t">📊 All 7 Model Results</div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--g1)">CatBoost ✓ Best</div><div class="perf-meta">R²=0.9849 · MSE=29.9M · MAE=3,221</div><div class="perf-bw"><div class="perf-b" style="width:98.49%;background:var(--g1)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--g3)">LightGBM</div><div class="perf-meta">R²=0.9840 · MSE=31.8M · MAE=3,320</div><div class="perf-bw"><div class="perf-b" style="width:98.40%;background:var(--g3)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--gold)">XGBoost</div><div class="perf-meta">R²=0.9836 · MSE=32.5M · MAE=3,429</div><div class="perf-bw"><div class="perf-b" style="width:98.36%;background:var(--gold)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--g4)">Random Forest</div><div class="perf-meta">R²=0.9836 · MSE=32.6M · MAE=3,374</div><div class="perf-bw"><div class="perf-b" style="width:98.36%;background:var(--g4)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--muted)">Decision Tree</div><div class="perf-meta">R²=0.9698 · MSE=60.0M · MAE=4,496</div><div class="perf-bw"><div class="perf-b" style="width:96.98%;background:var(--muted)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:var(--muted)">KNN</div><div class="perf-meta">R²=0.7989 · MSE=399.7M · MAE=10,825</div><div class="perf-bw"><div class="perf-b" style="width:79.89%;background:var(--muted)"></div></div></div>
+        <div class="perf-row"><div class="perf-name" style="color:#ccc">SVR</div><div class="perf-meta">R²=-0.077 · Not suitable</div><div class="perf-bw"><div class="perf-b" style="width:2%;background:#ccc"></div></div></div>
+      </div>
+
+      <div class="side-card">
+        <div class="sc-t">📚 References</div>
+        <div class="ref-item"><span class="ref-num">[1]</span>Chen & Guestrin — XGBoost: A Scalable Tree Boosting System. KDD 2016.</div>
+        <div class="ref-item"><span class="ref-num">[2]</span>Prokhorenkova et al. — CatBoost: unbiased boosting with categorical features. NeurIPS 2018.</div>
+        <div class="ref-item"><span class="ref-num">[3]</span>Ke et al. — LightGBM: A Highly Efficient Gradient Boosting Decision Tree. NeurIPS 2017.</div>
+        <div class="ref-item"><span class="ref-num">[4]</span>Lundberg & Lee — A Unified Approach to Interpreting Model Predictions (SHAP). NeurIPS 2017.</div>
+        <div class="ref-item"><span class="ref-num">[5]</span>Ribeiro et al. — "Why Should I Trust You?" (LIME). KDD 2016.</div>
+      </div>
+
+      <div class="side-card" style="background:linear-gradient(135deg,var(--g1),var(--g2));border:none">
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#fff;margin-bottom:7px">Try the Predictor</div>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.8);margin-bottom:13px;line-height:1.6">Choose from 7 ML models. Get SHAP explanation + AI recommendations instantly.</p>
+        <a href="/predict" style="display:block;text-align:center;background:#fff;color:var(--g1);padding:10px;border-radius:50px;font-size:.8rem;font-weight:700;text-decoration:none">Predict Now →</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

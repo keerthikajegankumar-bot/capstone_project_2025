@@ -1,0 +1,918 @@
+{
+  "crops": [
+    "Maize",
+    "Potatoes",
+    "Rice",
+    "Soybeans",
+    "Wheat"
+  ],
+  "seasons": [
+    "monsoon",
+    "post-monsoon",
+    "summer",
+    "winter"
+  ],
+  "crop_map": {
+    "Maize": 0,
+    "Potatoes": 1,
+    "Rice": 2,
+    "Soybeans": 3,
+    "Wheat": 4
+  },
+  "season_map": {
+    "monsoon": 0,
+    "post-monsoon": 1,
+    "summer": 2,
+    "winter": 3
+  },
+  "feature_cols": [
+    "avg_rainfall",
+    "pesticides_tonnes",
+    "avg_temp",
+    "Radiation",
+    "Season_enc",
+    "Item_enc"
+  ],
+  "model_results": {
+    "Random Forest": {
+      "MSE": 32637472.01,
+      "MAE": 3373.64,
+      "R2": 0.9836
+    },
+    "SVR": {
+      "MSE": 2140027783.75,
+      "MAE": 23305.11,
+      "R2": -0.0765
+    },
+    "KNN": {
+      "MSE": 399717533.84,
+      "MAE": 10824.65,
+      "R2": 0.7989
+    },
+    "Decision Tree": {
+      "MSE": 60043237.6,
+      "MAE": 4496.16,
+      "R2": 0.9698
+    },
+    "XGBoost": {
+      "MSE": 32513824.8,
+      "MAE": 3429.38,
+      "R2": 0.9836
+    },
+    "LightGBM": {
+      "MSE": 31759275.63,
+      "MAE": 3319.68,
+      "R2": 0.984
+    },
+    "CatBoost": {
+      "MSE": 29927853.75,
+      "MAE": 3221.27,
+      "R2": 0.9849
+    }
+  },
+  "shap_importance": {
+    "avg_rainfall": 3779.766860655018,
+    "pesticides_tonnes": 177.42165240188942,
+    "avg_temp": 2027.8993334979004,
+    "Radiation": 932.7469564183215,
+    "Season": 1242.9228933034208,
+    "Crop": 28127.85780561208
+  },
+  "actual_vs_pred": [
+    {
+      "actual": 25120.6,
+      "predicted": 25260.35
+    },
+    {
+      "actual": 17746.8,
+      "predicted": 18204.23
+    },
+    {
+      "actual": 152303.0,
+      "predicted": 143446.27
+    },
+    {
+      "actual": 31515.3,
+      "predicted": 30503.08
+    },
+    {
+      "actual": 17424.8,
+      "predicted": 20604.5
+    },
+    {
+      "actual": 12770.4,
+      "predicted": 12571.41
+    },
+    {
+      "actual": 26597.4,
+      "predicted": 27357.17
+    },
+    {
+      "actual": 25955.6,
+      "predicted": 30060.65
+    },
+    {
+      "actual": 168297.9,
+      "predicted": 160343.86
+    },
+    {
+      "actual": 21879.9,
+      "predicted": 22024.79
+    },
+    {
+      "actual": 46993.9,
+      "predicted": 43494.93
+    },
+    {
+      "actual": 23866.9,
+      "predicted": 22988.73
+    },
+    {
+      "actual": 24134.9,
+      "predicted": 23927.09
+    },
+    {
+      "actual": 144378.0,
+      "predicted": 155361.4
+    },
+    {
+      "actual": 28082.7,
+      "predicted": 29018.86
+    },
+    {
+      "actual": 186472.3,
+      "predicted": 164386.75
+    },
+    {
+      "actual": 23003.1,
+      "predicted": 26535.67
+    },
+    {
+      "actual": 38370.5,
+      "predicted": 37795.24
+    },
+    {
+      "actual": 39535.7,
+      "predicted": 31991.7
+    },
+    {
+      "actual": 33121.7,
+      "predicted": 27781.73
+    },
+    {
+      "actual": 15288.5,
+      "predicted": 20509.59
+    },
+    {
+      "actual": 25855.2,
+      "predicted": 26253.32
+    },
+    {
+      "actual": 20514.5,
+      "predicted": 20807.67
+    },
+    {
+      "actual": 104141.1,
+      "predicted": 117532.51
+    },
+    {
+      "actual": 35407.7,
+      "predicted": 39063.46
+    },
+    {
+      "actual": 21999.2,
+      "predicted": 22109.18
+    },
+    {
+      "actual": 138688.2,
+      "predicted": 142606.66
+    },
+    {
+      "actual": 132057.5,
+      "predicted": 135749.96
+    },
+    {
+      "actual": 27072.0,
+      "predicted": 25635.21
+    },
+    {
+      "actual": 33055.7,
+      "predicted": 28958.89
+    },
+    {
+      "actual": 126585.1,
+      "predicted": 121822.07
+    },
+    {
+      "actual": 25465.4,
+      "predicted": 26504.88
+    },
+    {
+      "actual": 16635.7,
+      "predicted": 16072.76
+    },
+    {
+      "actual": 133765.8,
+      "predicted": 136639.65
+    },
+    {
+      "actual": 162037.9,
+      "predicted": 157949.08
+    },
+    {
+      "actual": 25286.8,
+      "predicted": 25640.53
+    },
+    {
+      "actual": 21385.3,
+      "predicted": 22918.09
+    },
+    {
+      "actual": 31848.3,
+      "predicted": 33233.18
+    },
+    {
+      "actual": 23091.3,
+      "predicted": 23181.19
+    },
+    {
+      "actual": 32588.6,
+      "predicted": 27590.8
+    },
+    {
+      "actual": 35289.3,
+      "predicted": 36846.58
+    },
+    {
+      "actual": 24689.4,
+      "predicted": 24968.15
+    },
+    {
+      "actual": 29628.6,
+      "predicted": 30465.23
+    },
+    {
+      "actual": 13110.0,
+      "predicted": 13723.94
+    },
+    {
+      "actual": 22119.2,
+      "predicted": 25902.8
+    },
+    {
+      "actual": 38869.0,
+      "predicted": 39016.35
+    },
+    {
+      "actual": 151514.7,
+      "predicted": 134338.97
+    },
+    {
+      "actual": 132622.2,
+      "predicted": 139635.66
+    },
+    {
+      "actual": 27846.1,
+      "predicted": 26697.38
+    },
+    {
+      "actual": 150450.7,
+      "predicted": 153335.61
+    },
+    {
+      "actual": 159274.1,
+      "predicted": 153135.72
+    },
+    {
+      "actual": 16046.3,
+      "predicted": 14451.28
+    },
+    {
+      "actual": 34597.3,
+      "predicted": 33890.47
+    },
+    {
+      "actual": 40622.2,
+      "predicted": 36710.91
+    },
+    {
+      "actual": 10052.6,
+      "predicted": 11005.98
+    },
+    {
+      "actual": 25950.0,
+      "predicted": 29446.4
+    },
+    {
+      "actual": 32429.4,
+      "predicted": 30232.98
+    },
+    {
+      "actual": 24147.8,
+      "predicted": 23800.7
+    },
+    {
+      "actual": 17327.7,
+      "predicted": 20381.54
+    },
+    {
+      "actual": 30190.6,
+      "predicted": 26952.96
+    },
+    {
+      "actual": 28131.5,
+      "predicted": 28044.0
+    },
+    {
+      "actual": 33054.3,
+      "predicted": 31276.3
+    },
+    {
+      "actual": 17688.1,
+      "predicted": 15908.38
+    },
+    {
+      "actual": 17029.6,
+      "predicted": 18722.52
+    },
+    {
+      "actual": 27198.4,
+      "predicted": 28198.64
+    },
+    {
+      "actual": 30000.4,
+      "predicted": 32521.06
+    },
+    {
+      "actual": 20460.6,
+      "predicted": 19971.86
+    },
+    {
+      "actual": 29689.8,
+      "predicted": 26095.48
+    },
+    {
+      "actual": 135014.9,
+      "predicted": 135599.68
+    },
+    {
+      "actual": 17184.3,
+      "predicted": 19353.68
+    },
+    {
+      "actual": 13750.7,
+      "predicted": 14980.36
+    },
+    {
+      "actual": 33105.9,
+      "predicted": 33545.52
+    },
+    {
+      "actual": 39708.4,
+      "predicted": 33353.44
+    },
+    {
+      "actual": 29907.7,
+      "predicted": 26915.69
+    },
+    {
+      "actual": 31608.3,
+      "predicted": 29870.22
+    },
+    {
+      "actual": 32445.8,
+      "predicted": 32753.86
+    },
+    {
+      "actual": 19055.2,
+      "predicted": 20576.84
+    },
+    {
+      "actual": 30351.2,
+      "predicted": 32308.82
+    },
+    {
+      "actual": 23437.6,
+      "predicted": 25884.14
+    },
+    {
+      "actual": 22858.2,
+      "predicted": 23442.14
+    },
+    {
+      "actual": 24754.5,
+      "predicted": 25086.88
+    },
+    {
+      "actual": 29741.2,
+      "predicted": 27652.44
+    },
+    {
+      "actual": 27782.6,
+      "predicted": 28504.99
+    },
+    {
+      "actual": 27339.7,
+      "predicted": 31755.95
+    },
+    {
+      "actual": 19455.8,
+      "predicted": 20644.2
+    },
+    {
+      "actual": 29554.6,
+      "predicted": 24890.68
+    },
+    {
+      "actual": 22954.1,
+      "predicted": 22525.58
+    },
+    {
+      "actual": 36259.2,
+      "predicted": 35081.79
+    },
+    {
+      "actual": 29816.2,
+      "predicted": 29200.34
+    },
+    {
+      "actual": 33494.9,
+      "predicted": 35238.13
+    },
+    {
+      "actual": 172987.3,
+      "predicted": 155904.38
+    },
+    {
+      "actual": 15047.3,
+      "predicted": 23827.38
+    },
+    {
+      "actual": 36431.6,
+      "predicted": 41600.14
+    },
+    {
+      "actual": 28432.8,
+      "predicted": 27508.86
+    },
+    {
+      "actual": 27318.0,
+      "predicted": 35363.55
+    },
+    {
+      "actual": 26464.0,
+      "predicted": 24447.51
+    },
+    {
+      "actual": 24854.4,
+      "predicted": 24849.28
+    },
+    {
+      "actual": 35717.9,
+      "predicted": 35200.65
+    },
+    {
+      "actual": 28610.3,
+      "predicted": 26366.4
+    },
+    {
+      "actual": 16469.7,
+      "predicted": 15638.79
+    }
+  ],
+  "residuals_data": [
+    {
+      "predicted": 25260.35,
+      "residual": -139.75
+    },
+    {
+      "predicted": 18204.23,
+      "residual": -457.43
+    },
+    {
+      "predicted": 143446.27,
+      "residual": 8856.73
+    },
+    {
+      "predicted": 30503.08,
+      "residual": 1012.22
+    },
+    {
+      "predicted": 20604.5,
+      "residual": -3179.7
+    },
+    {
+      "predicted": 12571.41,
+      "residual": 198.99
+    },
+    {
+      "predicted": 27357.17,
+      "residual": -759.77
+    },
+    {
+      "predicted": 30060.65,
+      "residual": -4105.05
+    },
+    {
+      "predicted": 160343.86,
+      "residual": 7954.04
+    },
+    {
+      "predicted": 22024.79,
+      "residual": -144.89
+    },
+    {
+      "predicted": 43494.93,
+      "residual": 3498.97
+    },
+    {
+      "predicted": 22988.73,
+      "residual": 878.17
+    },
+    {
+      "predicted": 23927.09,
+      "residual": 207.81
+    },
+    {
+      "predicted": 155361.4,
+      "residual": -10983.4
+    },
+    {
+      "predicted": 29018.86,
+      "residual": -936.16
+    },
+    {
+      "predicted": 164386.75,
+      "residual": 22085.55
+    },
+    {
+      "predicted": 26535.67,
+      "residual": -3532.57
+    },
+    {
+      "predicted": 37795.24,
+      "residual": 575.26
+    },
+    {
+      "predicted": 31991.7,
+      "residual": 7544.0
+    },
+    {
+      "predicted": 27781.73,
+      "residual": 5339.97
+    },
+    {
+      "predicted": 20509.59,
+      "residual": -5221.09
+    },
+    {
+      "predicted": 26253.32,
+      "residual": -398.12
+    },
+    {
+      "predicted": 20807.67,
+      "residual": -293.17
+    },
+    {
+      "predicted": 117532.51,
+      "residual": -13391.41
+    },
+    {
+      "predicted": 39063.46,
+      "residual": -3655.76
+    },
+    {
+      "predicted": 22109.18,
+      "residual": -109.98
+    },
+    {
+      "predicted": 142606.66,
+      "residual": -3918.46
+    },
+    {
+      "predicted": 135749.96,
+      "residual": -3692.46
+    },
+    {
+      "predicted": 25635.21,
+      "residual": 1436.79
+    },
+    {
+      "predicted": 28958.89,
+      "residual": 4096.81
+    },
+    {
+      "predicted": 121822.07,
+      "residual": 4763.03
+    },
+    {
+      "predicted": 26504.88,
+      "residual": -1039.48
+    },
+    {
+      "predicted": 16072.76,
+      "residual": 562.94
+    },
+    {
+      "predicted": 136639.65,
+      "residual": -2873.85
+    },
+    {
+      "predicted": 157949.08,
+      "residual": 4088.82
+    },
+    {
+      "predicted": 25640.53,
+      "residual": -353.73
+    },
+    {
+      "predicted": 22918.09,
+      "residual": -1532.79
+    },
+    {
+      "predicted": 33233.18,
+      "residual": -1384.88
+    },
+    {
+      "predicted": 23181.19,
+      "residual": -89.89
+    },
+    {
+      "predicted": 27590.8,
+      "residual": 4997.8
+    },
+    {
+      "predicted": 36846.58,
+      "residual": -1557.28
+    },
+    {
+      "predicted": 24968.15,
+      "residual": -278.75
+    },
+    {
+      "predicted": 30465.23,
+      "residual": -836.63
+    },
+    {
+      "predicted": 13723.94,
+      "residual": -613.94
+    },
+    {
+      "predicted": 25902.8,
+      "residual": -3783.6
+    },
+    {
+      "predicted": 39016.35,
+      "residual": -147.35
+    },
+    {
+      "predicted": 134338.97,
+      "residual": 17175.73
+    },
+    {
+      "predicted": 139635.66,
+      "residual": -7013.46
+    },
+    {
+      "predicted": 26697.38,
+      "residual": 1148.72
+    },
+    {
+      "predicted": 153335.61,
+      "residual": -2884.91
+    },
+    {
+      "predicted": 153135.72,
+      "residual": 6138.38
+    },
+    {
+      "predicted": 14451.28,
+      "residual": 1595.02
+    },
+    {
+      "predicted": 33890.47,
+      "residual": 706.83
+    },
+    {
+      "predicted": 36710.91,
+      "residual": 3911.29
+    },
+    {
+      "predicted": 11005.98,
+      "residual": -953.38
+    },
+    {
+      "predicted": 29446.4,
+      "residual": -3496.4
+    },
+    {
+      "predicted": 30232.98,
+      "residual": 2196.42
+    },
+    {
+      "predicted": 23800.7,
+      "residual": 347.1
+    },
+    {
+      "predicted": 20381.54,
+      "residual": -3053.84
+    },
+    {
+      "predicted": 26952.96,
+      "residual": 3237.64
+    },
+    {
+      "predicted": 28044.0,
+      "residual": 87.5
+    },
+    {
+      "predicted": 31276.3,
+      "residual": 1778.0
+    },
+    {
+      "predicted": 15908.38,
+      "residual": 1779.72
+    },
+    {
+      "predicted": 18722.52,
+      "residual": -1692.92
+    },
+    {
+      "predicted": 28198.64,
+      "residual": -1000.24
+    },
+    {
+      "predicted": 32521.06,
+      "residual": -2520.66
+    },
+    {
+      "predicted": 19971.86,
+      "residual": 488.74
+    },
+    {
+      "predicted": 26095.48,
+      "residual": 3594.32
+    },
+    {
+      "predicted": 135599.68,
+      "residual": -584.78
+    },
+    {
+      "predicted": 19353.68,
+      "residual": -2169.38
+    },
+    {
+      "predicted": 14980.36,
+      "residual": -1229.66
+    },
+    {
+      "predicted": 33545.52,
+      "residual": -439.62
+    },
+    {
+      "predicted": 33353.44,
+      "residual": 6354.96
+    },
+    {
+      "predicted": 26915.69,
+      "residual": 2992.01
+    },
+    {
+      "predicted": 29870.22,
+      "residual": 1738.08
+    },
+    {
+      "predicted": 32753.86,
+      "residual": -308.06
+    },
+    {
+      "predicted": 20576.84,
+      "residual": -1521.64
+    },
+    {
+      "predicted": 32308.82,
+      "residual": -1957.62
+    },
+    {
+      "predicted": 25884.14,
+      "residual": -2446.54
+    },
+    {
+      "predicted": 23442.14,
+      "residual": -583.94
+    },
+    {
+      "predicted": 25086.88,
+      "residual": -332.38
+    },
+    {
+      "predicted": 27652.44,
+      "residual": 2088.76
+    },
+    {
+      "predicted": 28504.99,
+      "residual": -722.39
+    },
+    {
+      "predicted": 31755.95,
+      "residual": -4416.25
+    },
+    {
+      "predicted": 20644.2,
+      "residual": -1188.4
+    },
+    {
+      "predicted": 24890.68,
+      "residual": 4663.92
+    },
+    {
+      "predicted": 22525.58,
+      "residual": 428.52
+    },
+    {
+      "predicted": 35081.79,
+      "residual": 1177.41
+    },
+    {
+      "predicted": 29200.34,
+      "residual": 615.86
+    },
+    {
+      "predicted": 35238.13,
+      "residual": -1743.23
+    },
+    {
+      "predicted": 155904.38,
+      "residual": 17082.92
+    },
+    {
+      "predicted": 23827.38,
+      "residual": -8780.08
+    },
+    {
+      "predicted": 41600.14,
+      "residual": -5168.54
+    },
+    {
+      "predicted": 27508.86,
+      "residual": 923.94
+    },
+    {
+      "predicted": 35363.55,
+      "residual": -8045.55
+    },
+    {
+      "predicted": 24447.51,
+      "residual": 2016.49
+    },
+    {
+      "predicted": 24849.28,
+      "residual": 5.12
+    },
+    {
+      "predicted": 35200.65,
+      "residual": 517.25
+    },
+    {
+      "predicted": 26366.4,
+      "residual": 2243.9
+    },
+    {
+      "predicted": 15638.79,
+      "residual": 830.91
+    }
+  ],
+  "crop_avg": {
+    "Maize": 29060.07,
+    "Potatoes": 137730.55,
+    "Rice": 33513.74,
+    "Soybeans": 15980.11,
+    "Wheat": 24745.76
+  },
+  "crop_min": {
+    "Maize": 9031.8,
+    "Potatoes": 50843.0,
+    "Rice": 13435.6,
+    "Soybeans": 5908.3,
+    "Wheat": 12013.9
+  },
+  "crop_max": {
+    "Maize": 42493.0,
+    "Potatoes": 192360.1,
+    "Rice": 49971.3,
+    "Soybeans": 23682.5,
+    "Wheat": 34567.5
+  },
+  "season_avg": {
+    "monsoon": 47336.22,
+    "post-monsoon": 49233.73,
+    "summer": 44933.83,
+    "winter": 42736.39
+  },
+  "dataset_stats": {
+    "total": 2800,
+    "avg_yield": 46075.83,
+    "max_yield": 192360.1,
+    "min_yield": 5908.3
+  }
+}
